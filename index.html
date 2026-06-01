@@ -638,30 +638,45 @@ function renderQuestion() {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
     btn.textContent = opt.text;
-    btn.onclick = () => selectOption(opt.score, btn);
+    btn.disabled = false;
+    btn.style.pointerEvents = 'auto';
+    btn.style.opacity = '1';
+    // 모바일 터치 이벤트도 함께 처리
+    btn.addEventListener('click', () => selectOption(opt.score, btn));
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      selectOption(opt.score, btn);
+    });
     optEl.appendChild(btn);
   });
 }
 
+let isAnimating = false;
+
 function selectOption(score, btn) {
-  // 중복 클릭 방지 및 선택 초기화
+  if (isAnimating) return;
+  isAnimating = true;
+
   document.querySelectorAll('.option-btn').forEach(b => {
     b.classList.remove('selected');
     b.disabled = true;
     b.style.pointerEvents = 'none';
+    b.style.opacity = '0.6';
   });
   btn.classList.add('selected');
+  btn.style.opacity = '1';
   scores.push(score);
   totalScore += score;
 
   setTimeout(() => {
     current++;
+    isAnimating = false;
     if (current < questions.length) {
       renderQuestion();
     } else {
       showResult();
     }
-  }, 350);
+  }, 400);
 }
 
 function showResult() {
