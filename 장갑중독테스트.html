@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>혹시 '나'… 장갑 중독자? 🧤</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Gmarket+Sans:wght@300;500;700&display=swap');
+
+  :root {
+    --green: #2ecc71;
+    --dark-green: #1a6b3c;
+    --deep: #0d1f14;
+    --card-bg: #f9fdf9;
+    --accent: #ff6b35;
+    --soft: #e8f5ed;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--deep);
+    min-height: 100vh;
+    font-family: 'Noto Sans KR', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px 16px;
+    background-image: radial-gradient(ellipse at 20% 50%, #1a3d2b 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 20%, #0d2e1a 0%, transparent 50%);
+  }
+
+  .container {
+    width: 100%;
+    max-width: 520px;
+  }
+
+  /* 인트로 화면 */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .intro-card {
+    background: var(--card-bg);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+    animation: slideUp 0.5s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .intro-header {
+    background: linear-gradient(135deg, #1a6b3c, #2ecc71);
+    padding: 40px 32px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .intro-header::before {
+    content: '🧤';
+    position: absolute;
+    font-size: 120px;
+    opacity: 0.08;
+    right: -20px;
+    top: -20px;
+    transform: rotate(20deg);
+  }
+
+  .intro-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+
+  .intro-title {
+    font-size: 30px;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.3;
+    margin-bottom: 8px;
+  }
+
+  .intro-title span {
+    color: #b8f5d0;
+  }
+
+  .intro-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+  }
+
+  .intro-body {
+    padding: 28px 32px 32px;
+  }
+
+  .intro-desc {
+    font-size: 14px;
+    color: #444;
+    line-height: 1.8;
+    margin-bottom: 8px;
+  }
+
+  .intro-desc b { color: var(--dark-green); }
+
+  .intro-meta {
+    display: flex;
+    gap: 16px;
+    margin: 20px 0 24px;
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #888;
+  }
+
+  .meta-icon {
+    width: 28px;
+    height: 28px;
+    background: var(--soft);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .start-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #1a6b3c, #2ecc71);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 8px 24px rgba(46,204,113,0.4);
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+  .start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(46,204,113,0.5);
+  }
+
+  /* 퀴즈 화면 */
+  .quiz-card {
+    background: var(--card-bg);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+    animation: slideUp 0.4s ease;
+  }
+
+  .quiz-header {
+    background: linear-gradient(135deg, #1a6b3c, #2ecc71);
+    padding: 20px 24px;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .progress-label {
+    color: rgba(255,255,255,0.8);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .progress-num {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: #fff;
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  .quiz-body {
+    padding: 28px 24px 24px;
+  }
+
+  .question-text {
+    font-size: 18px;
+    font-weight: 900;
+    color: #1a1a1a;
+    line-height: 1.5;
+    margin-bottom: 24px;
+    min-height: 60px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option-btn {
+    padding: 14px 18px;
+    background: #fff;
+    border: 2px solid #e8f5ed;
+    border-radius: 14px;
+    font-size: 14px;
+    color: #333;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .option-btn:hover {
+    border-color: var(--green);
+    background: var(--soft);
+    transform: translateX(4px);
+  }
+
+  .option-btn.selected {
+    border-color: var(--green);
+    background: var(--soft);
+    font-weight: 700;
+    color: var(--dark-green);
+  }
+
+  /* 결과 화면 */
+  .result-card {
+    background: var(--card-bg);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+    animation: slideUp 0.5s ease;
+  }
+
+  .result-header {
+    padding: 40px 32px 32px;
+    text-align: center;
+    position: relative;
+  }
+
+  .result-emoji {
+    font-size: 72px;
+    display: block;
+    margin-bottom: 16px;
+    animation: bounce 0.6s ease;
+  }
+
+  @keyframes bounce {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .result-type-badge {
+    display: inline-block;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .result-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1.3;
+    margin-bottom: 12px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+
+  .result-subtitle {
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    font-style: italic;
+  }
+
+  .result-divider {
+    height: 4px;
+    margin: 0 32px;
+    border-radius: 2px;
+  }
+
+  .result-body {
+    padding: 28px 32px;
+  }
+
+  .result-desc {
+    font-size: 14px;
+    color: #444;
+    line-height: 1.9;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: var(--soft);
+    border-radius: 12px;
+    border-left: 4px solid var(--green);
+  }
+
+  .result-tips {
+    margin-bottom: 24px;
+  }
+
+  .tips-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--dark-green);
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  .tip-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #555;
+    line-height: 1.6;
+  }
+
+  .tip-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+
+  .campaign-banner {
+    background: linear-gradient(135deg, #0d1f14, #1a6b3c);
+    border-radius: 14px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .campaign-icon { font-size: 28px; flex-shrink: 0; }
+
+  .campaign-text .ct-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+
+  .campaign-text .ct-sub {
+    font-size: 11px;
+    color: rgba(255,255,255,0.65);
+  }
+
+  .retry-btn {
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    border: 2px solid #ddd;
+    border-radius: 14px;
+    font-size: 14px;
+    color: #888;
+    cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+    transition: all 0.15s;
+  }
+
+  .retry-btn:hover {
+    border-color: var(--green);
+    color: var(--dark-green);
+  }
+
+  .score-bar {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 16px 0 24px;
+  }
+
+  .score-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #e0e0e0;
+  }
+
+  .score-dot.filled {
+    background: var(--accent);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- 인트로 -->
+  <div id="screen-intro" class="screen active">
+    <div class="intro-card">
+      <div class="intro-header">
+        <div class="intro-badge">손위생 캠페인</div>
+        <div class="intro-title">혹시 '나'…<br><span>장갑 중독자?</span> 🧤</div>
+        <div class="intro-sub">나도 모르게 습관처럼 끼고 있는 건 아닐까?</div>
+      </div>
+      <div class="intro-body">
+        <p class="intro-desc">
+          환자 곁에 갈 때 습관처럼 장갑 끼는 사람 🙋<br>
+          장갑 낀 채로 키보드 치는 사람 🙋‍♀️<br>
+          <b>딱 6문항으로 알아보는 나의 장갑 중독 레벨!</b>
+        </p>
+        <div class="intro-meta">
+          <div class="meta-item">
+            <div class="meta-icon">⏱️</div>
+            <span>약 2분 이내</span>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon">📋</div>
+            <span>6문항</span>
+          </div>
+          <div class="meta-item">
+            <div class="meta-icon">🎁</div>
+            <span>참여 시 상품 증정</span>
+          </div>
+        </div>
+        <button class="start-btn" onclick="startQuiz()">테스트 시작하기 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 퀴즈 -->
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-card">
+      <div class="quiz-header">
+        <div class="progress-info">
+          <span class="progress-label">QUESTION</span>
+          <span class="progress-num" id="progress-num">1 / 6</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width: 16.6%"></div>
+        </div>
+      </div>
+      <div class="quiz-body">
+        <div class="question-text" id="question-text"></div>
+        <div class="options" id="options"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 결과 -->
+  <div id="screen-result" class="screen">
+    <div class="result-card">
+      <div class="result-header" id="result-header">
+        <span class="result-emoji" id="result-emoji"></span>
+        <div class="result-type-badge" id="result-badge"></div>
+        <div class="result-title" id="result-title"></div>
+        <div class="result-subtitle" id="result-subtitle"></div>
+      </div>
+      <div class="score-bar" id="score-bar"></div>
+      <div class="result-divider" id="result-divider"></div>
+      <div class="result-body">
+        <div class="result-desc" id="result-desc"></div>
+        <div class="result-tips" id="result-tips"></div>
+        <div class="campaign-banner">
+          <div class="campaign-icon">🏥</div>
+          <div class="campaign-text">
+            <div class="ct-title">부스에서 상품 받아가세요!</div>
+            <div class="ct-sub">손위생 캠페인 부스 참여 시 전원 상품 증정</div>
+          </div>
+        </div>
+        <button class="retry-btn" onclick="resetQuiz()">↩ 다시 테스트하기</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const questions = [
+  {
+    text: "환자 곁에 갈 때 나는…?",
+    options: [
+      { text: "손위생만 하고 맨손으로. 장갑은 필요할 때만!", score: 0 },
+      { text: "혹시 모르니까 미리 끼고 가는 편.", score: 1 },
+      { text: "일단 끼고 봄. 안 끼면 왠지 불안함.", score: 2 },
+    ]
+  },
+  {
+    text: "장갑 낀 채로 키보드 치거나 문손잡이 잡은 적 있나요?",
+    options: [
+      { text: "그럴 거면 장갑 먼저 벗죠. 그게 맞잖아요.", score: 0 },
+      { text: "가끔… 잠깐인데 뭐 어때서요 ㅎ", score: 1 },
+      { text: "맨날요. 그게 문제였나요…?", score: 2 },
+    ]
+  },
+  {
+    text: "A 환자를 보고나서 장갑 안 벗고 B 환자에게 바로 간 적 있나요?",
+    options: [
+      { text: "절대 안 되죠. 환자 바뀌면 장갑도 바꿔야죠.", score: 0 },
+      { text: "바빠서 가끔… 잠깐만 그런 거예요.", score: 1 },
+      { text: "자주요. 어차피 장갑 끼고 있으면 괜찮은 거 아닌가요?", score: 2 },
+    ]
+  },
+  {
+    text: "장갑 벗고 나서 손위생, 얼마나 하세요?",
+    options: [
+      { text: "항상요. 장갑 벗으면 손소독 해야죠.", score: 0 },
+      { text: "바쁘면 가끔 빠뜨리긴 해요…", score: 1 },
+      { text: "장갑 꼈었는데 굳이요?", score: 2 },
+    ]
+  },
+  {
+    text: "장갑 위에 손소독제 쓴 적 있나요?",
+    options: [
+      { text: "아니요. 그건 의미 없는 거잖아요.", score: 0 },
+      { text: "가끔… 되는 줄 알았어요.", score: 1 },
+      { text: "자주요. 더 깨끗한 거 아닌가요?", score: 2 },
+    ]
+  },
+  {
+    text: "손에 낀 장갑을 보고 문득 '언제 꼈더라...?' 싶었던 적이 있나요?",
+    options: [
+      { text: "없어요. 한 처치 끝나면 바로 벗거든요.", score: 0 },
+      { text: "가끔요… 바쁘다 보면 잊을 때도 있죠 뭐.", score: 1 },
+      { text: "자주요. 벗을 타이밍을 모르겠어요.", score: 2 },
+    ]
+  },
+];
+
+const results = [
+  {
+    range: [0, 2],
+    emoji: "🏆",
+    badge: "장갑 마스터",
+    badgeColor: "#1a6b3c",
+    badgeBg: "rgba(255,255,255,0.9)",
+    title: "장갑 바로 아는 사람!",
+    subtitle: '"저 사실 감염관리 교육 들은 사람이에요"',
+    headerBg: "linear-gradient(135deg, #1a6b3c, #2ecc71)",
+    dividerColor: "#2ecc71",
+    desc: "올바른 장갑 착용 원칙을 잘 알고 실천하고 계시네요! 🎉 주변 동료에게도 알려주시면 더 좋겠죠?",
+    tips: [
+      "장갑은 혈액·체액 노출, 점막 접촉 등 꼭 필요한 상황에서만!",
+      "장갑 착용 전·후 손위생 — 이미 잘 하고 계시죠?",
+      "이 캠페인 자랑스럽게 통과 🎖️"
+    ]
+  },
+  {
+    range: [3, 6],
+    emoji: "🤔",
+    badge: "요주의 장갑러",
+    badgeColor: "#b35c00",
+    badgeBg: "rgba(255,255,255,0.9)",
+    title: "알 것 같은데… 애매한 당신",
+    subtitle: '"나 나름 열심히 하는데 왜지?"',
+    headerBg: "linear-gradient(135deg, #e67e22, #f39c12)",
+    dividerColor: "#f39c12",
+    desc: "기본기는 있는데 아직 헷갈리는 부분이 있어요. 오늘 캠페인으로 딱 정리하고 가세요! 지금 이 순간이 찐 감염관리러가 되는 타이밍 🕐",
+    tips: [
+      "장갑 위 손소독제? → 효과 없음! 반드시 제거 후 수행",
+      "처치 바뀔 때마다 장갑 교체 → 귀찮아도 필수",
+      "한 처치 끝나면 바로 장갑 제거 + 손위생 세트로!"
+    ]
+  },
+  {
+    range: [7, 12],
+    emoji: "🧤",
+    badge: "장갑 중독자",
+    badgeColor: "#c0392b",
+    badgeBg: "rgba(255,255,255,0.9)",
+    title: "실화야…? 장갑 없인 못 살아",
+    subtitle: '"장갑이 날 지켜준다고 믿었는데"',
+    headerBg: "linear-gradient(135deg, #c0392b, #e74c3c)",
+    dividerColor: "#e74c3c",
+    desc: "장갑이 모든 걸 막아준다고 생각하셨군요 😅 사실 잘못된 장갑 착용이 오히려 감염을 퍼뜨릴 수 있어요. 오늘 캠페인이 인생 터닝포인트가 될 거예요!",
+    tips: [
+      "장갑 = 손위생 대체재 ❌ 보조 수단 ✅",
+      "불필요한 장갑 착용 → 교차오염·환경오염 유발",
+      "지금 바로 감염관리팀 부스로 오세요 🏃‍♀️"
+    ]
+  }
+];
+
+let current = 0;
+let totalScore = 0;
+let scores = [];
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function startQuiz() {
+  current = 0;
+  totalScore = 0;
+  scores = [];
+  renderQuestion();
+  showScreen('screen-quiz');
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  document.getElementById('question-text').textContent = q.text;
+  document.getElementById('progress-num').textContent = `${current + 1} / ${questions.length}`;
+  document.getElementById('progress-fill').style.width = `${((current + 1) / questions.length) * 100}%`;
+
+  const optEl = document.getElementById('options');
+  optEl.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt.text;
+    btn.onclick = () => selectOption(opt.score, btn);
+    optEl.appendChild(btn);
+  });
+}
+
+function selectOption(score, btn) {
+  // 중복 클릭 방지 및 선택 초기화
+  document.querySelectorAll('.option-btn').forEach(b => {
+    b.classList.remove('selected');
+    b.disabled = true;
+    b.style.pointerEvents = 'none';
+  });
+  btn.classList.add('selected');
+  scores.push(score);
+  totalScore += score;
+
+  setTimeout(() => {
+    current++;
+    if (current < questions.length) {
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  }, 350);
+}
+
+function showResult() {
+  const result = results.find(r => totalScore >= r.range[0] && totalScore <= r.range[1]);
+
+  document.getElementById('result-emoji').textContent = result.emoji;
+  document.getElementById('result-header').style.background = result.headerBg;
+
+  const badge = document.getElementById('result-badge');
+  badge.textContent = result.badge;
+  badge.style.color = result.badgeColor;
+  badge.style.background = result.badgeBg;
+
+  document.getElementById('result-title').textContent = result.title;
+  document.getElementById('result-subtitle').textContent = result.subtitle;
+  document.getElementById('result-desc').textContent = result.desc;
+  document.getElementById('result-divider').style.background = result.dividerColor;
+
+  // 점수 도트
+  const scoreBar = document.getElementById('score-bar');
+  scoreBar.innerHTML = '';
+  scores.forEach(s => {
+    const dot = document.createElement('div');
+    dot.className = 'score-dot' + (s > 0 ? ' filled' : '');
+    scoreBar.appendChild(dot);
+  });
+
+  // 팁
+  const tipsEl = document.getElementById('result-tips');
+  tipsEl.innerHTML = `<div class="tips-title">✅ 오늘 꼭 기억하세요</div>`;
+  result.tips.forEach(tip => {
+    tipsEl.innerHTML += `<div class="tip-item"><div class="tip-dot"></div><span>${tip}</span></div>`;
+  });
+
+  showScreen('screen-result');
+}
+
+function resetQuiz() {
+  startQuiz();
+}
+
+// 인트로 초기화
+showScreen('screen-intro');
+</script>
+</body>
+</html>
