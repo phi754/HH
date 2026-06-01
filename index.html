@@ -634,16 +634,11 @@ function renderQuestion() {
 
   const optEl = document.getElementById('options');
   optEl.innerHTML = '';
-  q.options.forEach((opt, i) => {
+  q.options.forEach((opt) => {
     const btn = document.createElement('button');
     btn.className = 'option-btn';
     btn.textContent = opt.text;
-    btn.disabled = false;
-    btn.style.pointerEvents = 'auto';
-    btn.style.opacity = '1';
-    // 모바일 터치 이벤트도 함께 처리
-    btn.addEventListener('click', () => selectOption(opt.score, btn));
-    btn.addEventListener('touchend', (e) => {
+    btn.addEventListener('pointerdown', (e) => {
       e.preventDefault();
       selectOption(opt.score, btn);
     });
